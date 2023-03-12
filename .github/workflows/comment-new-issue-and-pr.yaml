@@ -1,0 +1,26 @@
+name: '💬 Comment on new issue and PRs'
+
+on:
+  issues:
+    types: [opened]
+  pull_request:
+    types: [opened]
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - if: github.event_name == 'issues'
+        run: gh issue comment $ISSUE_NUMBER --body "Thank you for opening this issue!"
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+
+      - if: github.event_name == 'pull_request'
+        run: gh issue comment $PR_NUMBER --body "Thank you for opening this pull request!"
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
