@@ -1,0 +1,27 @@
+name: '📋 Job summary'
+
+on: workflow_dispatch
+
+jobs:
+
+  summary-echo:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "# Hello, $GITHUB_ACTOR!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+          echo "- $GITHUB_REPOSITORY" >> $GITHUB_STEP_SUMMARY
+          echo "- $GITHUB_EVENT_NAME" >> $GITHUB_STEP_SUMMARY
+          echo "- $GITHUB_WORKFLOW" >> $GITHUB_STEP_SUMMARY
+
+  summary-tee:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          tee $GITHUB_STEP_SUMMARY << EOF >/dev/null || true
+          # Hello, $GITHUB_ACTOR!
+      
+          - $GITHUB_REPOSITORY
+          - $GITHUB_EVENT_NAME
+          - $GITHUB_WORKFLOW
+          EOF
