@@ -1,0 +1,35 @@
+name: '🔣 Manual workflow'
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        type: string
+        required: true
+      age:
+        type: number
+        required: true
+      size:
+        type: choice
+        required: true
+        options:
+        - s
+        - m
+        - l
+      test:
+        type: boolean
+        default: false
+      env:
+        type: environment
+
+jobs:
+  job:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "name=$INPUT_NAME age=$INPUT_AGE size=$INPUT_SIZE test=$INPUT_TEST env=$INPUT_ENV"
+        env:
+          INPUT_NAME: ${{ github.event.inputs.name }}
+          INPUT_AGE:  ${{ github.event.inputs.age }}
+          INPUT_SIZE: ${{ github.event.inputs.size }}
+          INPUT_TEST: ${{ github.event.inputs.test }}
+          INPUT_ENV:  ${{ github.event.inputs.env }}
