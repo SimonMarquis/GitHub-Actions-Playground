@@ -1,5 +1,7 @@
 # 🛝 Playground for GitHub Actions
 
+#### Actions
+
 - [![♻️ Clear GitHub Actions cache](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/clear-cache.yaml/badge.svg)](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/clear-cache.yaml)
 - [![💬 Comment on new issue and PRs](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/comment-new-issue-and-pr.yaml/badge.svg)](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/comment-new-issue-and-pr.yaml)
 - [![🤖 Commit and Push](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/commit-and-push.yaml/badge.svg)](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/commit-and-push.yaml)
@@ -8,3 +10,8 @@
 - [![🔣 Manual workflow](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/manual-workflow.yaml/badge.svg)](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/manual-workflow.yaml)
 - [![🧮 Matrix Java versions](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/matrix-java-versions.yaml/badge.svg)](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/matrix-java-versions.yaml)
 - [![🏗️ Dump context](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/dump-context.yaml/badge.svg)](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/dump-context.yaml)
+
+#### Composite Actions
+
+- [`📦 Archive Android Lint reports`](https://github.com/SimonMarquis/GitHub-Actions-Playground/blob/main/.github/actions/android-lint-archive/action.yaml)
+- [`📦 Archive JUnit reports`](https://github.com/SimonMarquis/GitHub-Actions-Playground/blob/main/.github/actions/junit-archive/action.yaml)
