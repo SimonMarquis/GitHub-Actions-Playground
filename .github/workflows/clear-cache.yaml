@@ -23,7 +23,7 @@ jobs:
             set +e
             while :
             do
-              entries=$(gh actions-cache list --sort size --order desc --limit 100 | cut -f 1)
+              entries=($(gh actions-cache list --sort size --order desc --limit 100 | cut -f 1))
               if ((!${#entries[@]})); then break; fi
               for key in "${entries[@]}"
               do
@@ -38,7 +38,7 @@ jobs:
             set +e
             while :
             do
-              entries=$(gh actions-cache list --sort size --order desc --limit 100 --branch "$BRANCH" | cut -f 1)
+              entries=($(gh actions-cache list --sort size --order desc --limit 100 --branch "$BRANCH" | cut -f 1))
               if ((!${#entries[@]})); then break; fi
               for key in "${entries[@]}"
               do
