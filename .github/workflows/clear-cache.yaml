@@ -16,7 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: gh extension install actions/gh-actions-cache
-      - run: gh actions-cache list
       - name: Clear cache entries
         if: github.event_name == 'workflow_dispatch'
         run: |
@@ -45,4 +44,3 @@ jobs:
                 gh actions-cache delete "$key" --branch "$BRANCH" --confirm | sed -e 's/\x1b\[[0-9;]*m//g' | sed -e 's/^/- /' >> $GITHUB_STEP_SUMMARY
               done
             done
-      - run: gh actions-cache list
