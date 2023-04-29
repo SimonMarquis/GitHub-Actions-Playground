@@ -32,3 +32,11 @@ jobs:
       - name: Repeat
         if: ${{ contains(github.event.comment.body, 'repeat') }}
         run: gh issue comment $NUMBER --body "> $COMMENT"
+
+      - name: Commit
+        if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'commit') }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git commit -m "🤖" --allow-empty
+          git push
