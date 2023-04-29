@@ -11,30 +11,32 @@ jobs:
   check-comment:
     name: Check comment
     runs-on: ubuntu-latest
-    if: ${{ startsWith(github.event.comment.body, '@github-actions[bot]') }}
+    if: startsWith(github.event.comment.body, '@github-actions[bot]')
     env:
       ACTOR: ${{ github.actor }}
       NUMBER: ${{ github.event.issue.number }}
       COMMENT: ${{ github.event.comment.body }}
     steps:
       - uses: actions/checkout@v3
+      - if: github.event.issue.pull_request
+        run: gh pr checkout $NUMBER
 
       - name: Dump GitHub context
-        if: ${{ contains(github.event.comment.body, 'dump') }}
+        if: contains(github.event.comment.body, 'dump')
         run: echo "$GITHUB_CONTEXT"
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
 
       - name: Say hello to @${{ github.actor }}
-        if: ${{ contains(github.event.comment.body, 'hello') }}
+        if: contains(github.event.comment.body, 'hello')
         run: gh issue comment $NUMBER --body "Hi @$ACTOR!"
 
       - name: Repeat
-        if: ${{ contains(github.event.comment.body, 'repeat') }}
+        if: contains(github.event.comment.body, 'repeat')
         run: gh issue comment $NUMBER --body "> $COMMENT"
 
       - name: Commit
-        if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'commit') }}
+        if: github.event.issue.pull_request && contains(github.event.comment.body, 'commit')
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
