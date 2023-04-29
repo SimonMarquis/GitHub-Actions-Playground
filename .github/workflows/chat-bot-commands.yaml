@@ -14,9 +14,11 @@ jobs:
     if: ${{ startsWith(github.event.comment.body, '@github-actions[bot]') }}
     env:
       ACTOR: ${{ github.actor }}
-      NUMBER: ${{ github.event.number }}
+      NUMBER: "${{ github.event.issue.number }}"
+      COMMENT: ${{ github.event.comment.body }}
     steps:
       - uses: actions/checkout@v3
+      - run: echo ${{ github.event.issue.number }}
 
       - name: Dump GitHub context
         if: ${{ contains(github.event.comment.body, 'dump') }}
@@ -27,3 +29,7 @@ jobs:
       - name: Say hello to @${{ github.actor }}
         if: ${{ contains(github.event.comment.body, 'hello') }}
         run: gh issue comment $NUMBER --body "Hi @$ACTOR!"
+
+      - name: Repeat
+        if: ${{ contains(github.event.comment.body, 'repeat') }}
+        run: gh issue comment $NUMBER --body "> $COMMENT"
