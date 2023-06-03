@@ -1,0 +1,72 @@
+# https://docs.gradle.org/current/userguide/gradle_wrapper.html
+name: '🐘 Gradle wrapper update'
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '--gradle-version: accepted labels are `latest`, `release-candidate`, `nightly`, `release-nightly`'
+        type: string
+        default: latest
+        required: true
+      distribution-type:
+        description: '--distribution-type'
+        type: choice
+        options:
+          - all
+          - bin
+        default: bin
+        required: false
+      distribution-url:
+        description: '--gradle-distribution-url'
+        type: string
+        required: false
+      distribution-sha256:
+        description: '--gradle-distribution-sha256-sum'
+        type: string
+        required: false
+      network-timeout:
+        description: '--network-timeout'
+        type: number
+        required: false
+
+env:
+  INPUT_VERSION: ${{ inputs.version }}
+  INPUT_DISTRIBUTION_TYPE: ${{ inputs.distribution-type }}
+  INPUT_DISTRIBUTION_URL: ${{ inputs.distribution-url }}
+  INPUT_DISTRIBUTION_SHA256: ${{ inputs.distribution-sha256 }}
+  INPUT_NETWORK_TIMEOUT: ${{ inputs.network-timeout }}
+
+jobs:
+  gradle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: gradle/wrapper-validation-action@8d49e559aae34d3e0eb16cde532684bc9702762b # v1.0.6
+      - uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629 # v2.4.2
+        with:
+          gradle-home-cache-cleanup: true
+      - name: 'Update `gradle-wrapper.properties`'
+        run: |
+          args=()
+          args+=( '--gradle-version' "$INPUT_VERSION" )
+          [[ -n "$INPUT_DISTRIBUTION_TYPE" ]] && args+=( '--distribution-type' "$INPUT_DISTRIBUTION_TYPE" )
+          [[ -n "$INPUT_DISTRIBUTION_URL" ]] && args+=( '--distribution-url' "$INPUT_DISTRIBUTION_URL" )
+          [[ -n "$INPUT_DISTRIBUTION_SHA256" ]] && args+=( '--distribution-sha256' "$INPUT_DISTRIBUTION_SHA256" )
+          [[ -n "$INPUT_NETWORK_TIMEOUT" ]] && args+=( '--network-timeout' "$INPUT_NETWORK_TIMEOUT" )
+          ./gradlew wrapper "${args[@]}"
+      - name: 'Update wrapper jar'
+        run: ./gradlew wrapper
+      - run: |
+          if ! git diff --quiet --exit-code;
+          then
+            git config user.name 'github-actions[bot]'
+            git config user.email 'github-actions[bot]@users.noreply.github.com'
+            git add --all .
+            git commit -m "🐘 Update Gradle wrapper to $INPUT_VERSION"
+            git show
+            git push
+            echo "::notice::UPDATED"
+          else
+            echo "::notice::UP-TO-DATE"
+          fi
