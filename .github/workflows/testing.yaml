@@ -1,0 +1,44 @@
+name: '🧪 Testing'
+
+on:
+  push:
+    tags: ['*']
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Branch, tag, SHA, …'
+        required: true
+        default: 'main'
+        type: string
+  schedule:
+    - cron: 0 0 * * *
+
+jobs:
+
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump `${{ github.event_name }}` event
+        env:
+          EVENT: ${{ toJson(github.event) }}
+        run: echo "$EVENT"
+      - name: Dump inputs
+        env:
+          INPUTS: ${{ toJson(inputs) }}
+        run: echo "$INPUTS"
+      - name: Dump ref
+        env:
+          REF: ${{ github.ref }}
+        run: echo "$REF"
+
+      - name: '📋 workflow'
+        if: github.event_name == 'workflow_dispatch'
+        run: echo "workflow"
+
+      - name: '📋 schedule'
+        if: github.event_name == 'schedule'
+        run: echo "schedule"
+
+      - name: '📋 tag'
+        if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+        run: echo "tag"
