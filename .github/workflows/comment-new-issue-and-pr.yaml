@@ -15,12 +15,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - if: github.event_name == 'issues'
+      - if: github.event_name == 'issues' && github.actor != 'dependabot[bot]'
         run: gh issue comment $ISSUE_NUMBER --body "Thank you for opening this issue!"
         env:
           ISSUE_NUMBER: ${{ github.event.issue.number }}
 
-      - if: github.event_name == 'pull_request'
+      - if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
         run: gh issue comment $PR_NUMBER --body "Thank you for opening this pull request!"
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
