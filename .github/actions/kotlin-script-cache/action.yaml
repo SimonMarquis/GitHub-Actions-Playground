@@ -1,0 +1,32 @@
+name: '📦 Cache Kotlin scripts'
+description: 'Cache Kotlin script compilation'
+
+inputs:
+  path:
+    description: 'actions/cache@v3 path'
+    required: true
+    default: ${{ github.workspace }}/.main.kts
+  key:
+    description: 'actions/cache@v3 key'
+    required: true
+    default: kts-${{ runner.os }}-${{ hashFiles('**/*.main.kts') }}
+
+runs:
+  using: composite
+  steps:
+    
+    - if: env.KOTLIN_MAIN_KTS_COMPILED_SCRIPTS_CACHE_DIR == ''
+      run: echo "KOTLIN_MAIN_KTS_COMPILED_SCRIPTS_CACHE_DIR=$INPUT_PATH" >> $GITHUB_ENV
+      shell: bash
+      env:
+        INPUT_PATH: ${{ inputs.path }}
+
+    - name: Cache Kotlin scripts
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.KOTLIN_MAIN_KTS_COMPILED_SCRIPTS_CACHE_DIR }}
+        key: ${{ inputs.key }}
+
+    - name: Ensure the Kotlin scripts cache directory exists
+      run: mkdir -p "$KOTLIN_MAIN_KTS_COMPILED_SCRIPTS_CACHE_DIR"
+      shell: bash
