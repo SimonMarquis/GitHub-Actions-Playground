@@ -17,3 +17,4 @@
 
 - [`📦 Archive Android Lint reports`](https://github.com/SimonMarquis/GitHub-Actions-Playground/blob/main/.github/actions/android-lint-archive/action.yaml)
 - [`📦 Archive JUnit reports`](https://github.com/SimonMarquis/GitHub-Actions-Playground/blob/main/.github/actions/junit-archive/action.yaml)
+- [`📦 Cache Kotlin scripts`](https://github.com/SimonMarquis/GitHub-Actions-Playground/blob/main/.github/actions/kotlin-scripts-cache/action.yaml)
