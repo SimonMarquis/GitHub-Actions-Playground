@@ -3,13 +3,10 @@ name: '🕵️ Detect debug logging'
 on:
   pull_request:
 
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
-  check:
+  detection:
     name: Detect debug logging
     runs-on: ubuntu-latest
-    if: env.ACTIONS_STEP_DEBUG
     steps:
-      - run: echo "🕵️"
+      - if: env.ACTIONS_STEP_DEBUG
+        run: echo "🕵️"
