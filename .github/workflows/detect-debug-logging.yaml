@@ -1,8 +1,7 @@
 name: '🕵️ Detect debug logging'
 
 on:
-  issue_comment:
-    types: [created]
+  pull_request:
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
