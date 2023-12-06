@@ -1,0 +1,14 @@
+name: '🕵️ Detect debug logging'
+
+on:
+  issue_comment:
+    types: [created]
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  check:
+    name: Detect debug logging
+    runs-on: ubuntu-latest
+    if: env.ACTIONS_STEP_DEBUG
