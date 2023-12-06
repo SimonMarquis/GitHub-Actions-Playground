@@ -8,5 +8,5 @@ jobs:
     name: Detect debug logging
     runs-on: ubuntu-latest
     steps:
-      - if: env.ACTIONS_STEP_DEBUG
+      - if: ${{ env.ACTIONS_STEP_DEBUG }}
         run: echo "🕵️"
