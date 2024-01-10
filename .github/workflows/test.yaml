@@ -11,7 +11,7 @@ jobs:
     steps:
       - run: echo "$DATA"
         env:
-          DATA: ${{ inputs }}
+          DATA: ${{ toJson(inputs) }}
       - run: echo "$DATA"
         env:
           DATA: ${{ inputs.testing }}
