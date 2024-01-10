@@ -11,10 +11,10 @@ jobs:
     steps:
       - run: echo "$DATA"
         env:
-          DATA: ${{ input }}
+          DATA: ${{ inputs }}
       - run: echo "$DATA"
         env:
-          DATA: ${{ input.testing }}
+          DATA: ${{ inputs.testing }}
       - run: echo "$DATA"
         env:
-          DATA: ${{ input.testing || 'default' }}
+          DATA: ${{ inputs.testing || 'default' }}
