@@ -1,0 +1,20 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "$DATA"
+        env:
+          DATA: ${{ input }}
+      - run: echo "$DATA"
+        env:
+          DATA: ${{ input.testing }}
+      - run: echo "$DATA"
+        env:
+          DATA: ${{ input.testing || 'default' }}
