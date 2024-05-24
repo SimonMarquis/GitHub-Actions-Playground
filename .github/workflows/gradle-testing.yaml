@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       arguments:
-        description: 'Command line'
+        description: 'Command line arguments (as a JSON array)'
         required: true
-        default: 'projects --quiet'
+        default: '["projects", "--quiet"]'
         type: string
       java-version:
         description: 'Java version'
@@ -32,8 +32,6 @@ jobs:
         with:
           validate-wrappers: true
           gradle-home-cache-cleanup: true
-      - run: |
-          IFS=' ' args=($ARGS)
-          ./gradlew "${args[@]}"
+      - run: ./gradlew $ARGS
         env:
-          ARGS: ${{ inputs.arguments }}
+          ARGS: ${{ join(fromJSON(inputs.arguments), ' ') }}
