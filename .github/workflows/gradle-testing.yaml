@@ -1,12 +1,13 @@
 name: '🐘 Gradle testing workflow'
 
 on:
+  pull_request:
   workflow_dispatch:
     inputs:
       arguments:
-        description: 'Command line'
+        description: 'Command line arguments (as a JSON array)'
         required: true
-        default: 'projects --quiet'
+        default: '["projects", "--quiet"]'
         type: string
       java-version:
         description: 'Java version'
@@ -26,14 +27,32 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
-          java-version: ${{ inputs.java-version }}
-          distribution: ${{ inputs.java-distribution }}
+          java-version: ${{ inputs.java-version || '19' }}
+          distribution: ${{ inputs.java-distribution || 'temurin' }}
       - uses: gradle/actions/setup-gradle@db19848a5fa7950289d3668fb053140cf3028d43 # v3.3.2
         with:
           validate-wrappers: true
           gradle-home-cache-cleanup: true
       - run: |
-          IFS=' ' args=($ARGS)
-          ./gradlew "${args[@]}"
+          echo "${{ join(fromJSON(inputs.arguments || '["projects", "--quiet"]'), ' ') }}"
+          echo ${{ join(fromJSON(inputs.arguments || '["projects", "--quiet"]'), ' ') }}
+          ./gradlew ${{ join(fromJSON(inputs.arguments || '["projects", "--quiet"]'), ' ') }}
+          echo "${{ join(fromJSON(inputs.arguments || '["projects", "--quiet", "-Pkey=value"]'), ' ') }}"
+          echo ${{ join(fromJSON(inputs.arguments || '["projects", "--quiet", "-Pkey=value"]'), ' ') }}
+          ./gradlew ${{ join(fromJSON(inputs.arguments || '["projects", "--quiet", "-Pkey=value"]'), ' ') }}
+          echo "${{ join(fromJSON(inputs.arguments || '["projects", "--quiet", "-Pkey=va\"lue"]'), ' ') }}"
+          echo ${{ join(fromJSON(inputs.arguments || '["projects", "--quiet", "-Pkey=va\"lue"]'), ' ') }}
+          ./gradlew ${{ join(fromJSON(inputs.arguments || '["projects", "--quiet", "-Pkey=va\"lue"]'), ' ') }}
+          echo "${{ join(fromJSON(inputs.arguments || '["projects", "|| echo aaaaaaaaaa"]'), ' ') }}"
+          echo ${{ join(fromJSON(inputs.arguments || '["projects", "|| echo aaaaaaaaaa"]'), ' ') }}
+          ./gradlew ${{ join(fromJSON(inputs.arguments || '["projects", "|| echo aaaaaaaaaa"]'), ' ') }}
+          echo "${{ join(fromJSON(inputs.arguments || '["projects", "&& echo aaaaaaaaaa"]'), ' ') }}"
+          echo ${{ join(fromJSON(inputs.arguments || '["projects", "&& echo aaaaaaaaaa"]'), ' ') }}
+          ./gradlew ${{ join(fromJSON(inputs.arguments || '["projects", "&& echo aaaaaaaaaa"]'), ' ') }}
         env:
-          ARGS: ${{ inputs.arguments }}
+          ARGS:
+          ARGS2:
+          ARGS3:
+          ARGS4:
+          ARGS5: ${{ join(fromJSON(inputs.arguments || '["projects", "&& echo aaaaaaaaaa"]'), ' ') }}
+          ARGS6: ${{ join(fromJSON(inputs.arguments || '["projects", "; echo aaaaaaaaaa"]'), ' ') }}
