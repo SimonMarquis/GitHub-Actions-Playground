@@ -11,6 +11,7 @@
 - [![🐘 Gradle wrapper update](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/gradle-wrapper-update.yaml/badge.svg)](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/gradle-wrapper-update.yaml)
 - [![📋 Job summary](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/job-summary.yaml/badge.svg)](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/job-summary.yaml)
 - [![🔣 Manual workflow](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/manual-workflow.yaml/badge.svg)](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/manual-workflow.yaml)
+- [![🧮 Matrix from JSON](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/matrix-from-json.yaml/badge.svg)](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/matrix-from-json.yaml)
 - [![🧮 Matrix Java versions](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/matrix-java-versions.yaml/badge.svg)](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/matrix-java-versions.yaml)
 
 #### Composite Actions
