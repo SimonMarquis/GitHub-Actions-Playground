@@ -4,6 +4,7 @@ on: workflow_dispatch
 
 jobs:
   dump:
+    name: Dump
     runs-on: ubuntu-latest
     steps:
       - name: Show curl version
