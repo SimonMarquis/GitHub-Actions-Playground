@@ -13,7 +13,7 @@ jobs:
   comment:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - if: github.event_name == 'issues' && github.actor != 'dependabot[bot]'
         run: gh issue comment $ISSUE_NUMBER --body "Thank you for opening this issue!"
