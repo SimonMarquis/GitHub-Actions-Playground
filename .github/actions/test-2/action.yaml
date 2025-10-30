@@ -1,0 +1,6 @@
+name: 🧪 Test 2
+description: 🧪 Test 2
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
