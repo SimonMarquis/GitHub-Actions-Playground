@@ -19,7 +19,7 @@ runs:
   using: composite
   steps:
     - name: Caching…
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       id: cache
       with:
         key: android-${{ inputs.android-version }}-tools-${{ inputs.build-tools-version }}-cmd-${{ inputs.cmd-line-version }}-zip
