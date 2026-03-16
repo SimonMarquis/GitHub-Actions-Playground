@@ -3,6 +3,7 @@
 #### Actions
 
 - [![🧰 Chat bot commands](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/chat-bot-commands.yaml/badge.svg)](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/chat-bot-commands.yaml)
+- [![🧹 Cleanup Bot Comments](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/cleanup-bot-comments.yaml/badge.svg)](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/cleanup-bot-comments.yaml)
 - [![♻️ Clear GitHub Actions cache](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/clear-cache.yaml/badge.svg)](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/clear-cache.yaml)
 - [![💬 Comment on new issue and PRs](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/comment-new-issue-and-pr.yaml/badge.svg)](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/comment-new-issue-and-pr.yaml)
 - [![🤖 Commit and Push](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/commit-and-push.yaml/badge.svg)](https://github.com/SimonMarquis/GitHub-Actions-Playground/actions/workflows/commit-and-push.yaml)

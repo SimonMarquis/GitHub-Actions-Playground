@@ -1,0 +1,85 @@
+name: 🧹 Cleanup Bot Comments
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    env:
+      COMMENT_MARKER: '<!-- bot-comment-id: cleanup-demo -->'
+    # Generic check: ignore all bots to prevent loops and unnecessary runs
+    if: github.event.issue.pull_request && github.event.comment.user.type != 'Bot'
+    permissions:
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Cleanup and Acknowledge
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // 1. Dynamically infer the bot login from the current token
+            const { data: authenticatedUser } = await github.rest.users.getAuthenticated();
+            const botLogin = authenticatedUser.login;
+            console.log(`Running as @${botLogin}`);
+
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            
+            let hasNextPage = true;
+            let cursor = null;
+            const commentsToMinimize = [];
+
+            // 2. Fetch ALL comments using GraphQL pagination
+            while (hasNextPage) {
+              const query = `query($owner:String!,$repo:String!,$number:Int!,$cursor:String){
+                repository(owner:$owner,name:$repo){
+                  pullRequest(number:$number){
+                    comments(first:100,after:$cursor){
+                      pageInfo{hasNextPage endCursor}
+                      nodes{id body isMinimized author{login}}
+                    }
+                  }
+                }
+              }`;
+              
+              const result = await github.graphql(query, { owner, repo, number: issue_number, cursor });
+              const { nodes, pageInfo } = result.repository.pullRequest.comments;
+
+              nodes.forEach(comment => {
+                // Filter by the dynamically discovered botLogin and marker
+                if (
+                  comment.author?.login === botLogin && 
+                  comment.body.includes(process.env.COMMENT_MARKER) && 
+                  !comment.isMinimized
+                ) {
+                  commentsToMinimize.push(comment.id);
+                }
+              });
+
+              hasNextPage = pageInfo.hasNextPage;
+              cursor = pageInfo.endCursor;
+            }
+
+            // 3. Minimize comments in parallel
+            if (commentsToMinimize.length > 0) {
+              console.log(`Minimizing ${commentsToMinimize.length} comments...`);
+              const mutation = `mutation($id:ID!){minimizeComment(input:{subjectId:$id,classifier:OUTDATED}){clientMutationId}}`;
+              
+              await Promise.all(
+                commentsToMinimize.map(id => 
+                  github.graphql(mutation, { id }).catch(e => 
+                    console.error(`Failed to minimize ${id}: ${e.message}`)
+                  )
+                )
+              );
+            }
+
+            // 4. Add final acknowledgment
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number,
+              body: `${process.env.COMMENT_MARKER}\n### 🧹 Cleanup Complete\nPrevious bot comments have been marked as outdated. Only this message remains active.`
+            });
