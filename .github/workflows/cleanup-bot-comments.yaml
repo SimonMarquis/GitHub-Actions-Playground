@@ -18,7 +18,7 @@ jobs:
       issues: write
     steps:
       - name: Cleanup and Acknowledge
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const botLogin = process.env.BOT_LOGIN;
