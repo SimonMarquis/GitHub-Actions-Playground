@@ -1,0 +1,46 @@
+name: Minimize Comments
+description: Minimizes previous comments with a specific marker
+
+inputs:
+  marker:
+    description: The hidden marker used to identify previous comments
+    required: true
+  issue_number:
+    description: The issue or pull request number. Defaults to the current context.
+    required: false
+    default: ${{ github.event.issue.number || github.event.pull_request.number }}
+  token:
+    description: GitHub Token
+    default: ${{ github.token }}
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/github-script@v8
+      continue-on-error: true
+      env:
+        MARKER: ${{ inputs.marker }}
+        ISSUE_NUMBER: ${{ inputs.issue_number }}
+      with:
+        github-token: ${{ inputs.token }}
+        script: |
+          const { owner, repo } = context.repo;
+          const query = `query($owner:String!,$repo:String!,$number:Int!){
+            repository(owner:$owner,name:$repo){
+              issueOrPullRequest(number:$number){
+                ... on Issue { comments(last:100){ nodes{id body isMinimized} } }
+                ... on PullRequest { comments(last:100){ nodes{id body isMinimized} } }
+              }
+            }
+          }`;
+          
+          const mutation = `mutation($id:ID!){minimizeComment(input:{subjectId:$id,classifier:OUTDATED}){clientMutationId}}`;
+          const toMinimize = ((await github.graphql(query, { owner, repo, number: Number(process.env.ISSUE_NUMBER) }))
+            .repository?.issueOrPullRequest?.comments?.nodes || [])
+            .filter(c => c.body.includes(process.env.MARKER) && !c.isMinimized)
+            .map(c => github.graphql(mutation, { id: c.id }).then(() => ({ id: c.id })).catch(e => ({ id: c.id, error: e.message })));
+
+          (await Promise.all(toMinimize)).forEach(r => {
+            if (r.error) console.error(`Failed to minimize ${r.id}: ${r.error}`);
+            else console.log(`Successfully minimized: ${r.id}`);
+          });

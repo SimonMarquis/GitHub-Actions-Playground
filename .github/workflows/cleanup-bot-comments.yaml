@@ -6,7 +6,6 @@ on:
 
 env:
   COMMENT_MARKER: '<!-- bot-comment-id: cleanup-demo -->'
-  BOT_LOGIN: 'github-actions[bot]'
 
 jobs:
   cleanup:
@@ -17,84 +16,17 @@ jobs:
       pull-requests: write
       issues: write
     steps:
-      - name: Cleanup and Acknowledge
-        uses: actions/github-script@v8
+      - name: Minimize Previous Comments
+        uses: ./.github/actions/minimize-comments
         with:
-          script: |
-            const botLogin = process.env.BOT_LOGIN;
-            const { owner, repo } = context.repo;
-            const issue_number = context.issue.number;
-            
-            const commentsToMinimize = [];
-            const auditLog = [];
+          marker: ${{ env.COMMENT_MARKER }}
 
-            // 1. Fetch the last 100 comments via GraphQL
-            const query = `query($owner:String!,$repo:String!,$number:Int!){
-              repository(owner:$owner,name:$repo){
-                pullRequest(number:$number){
-                  comments(last:100){
-                    nodes{id body isMinimized minimizedReason url author{login}}
-                  }
-                }
-              }
-            }`;
-            
-            const result = await github.graphql(query, { owner, repo, number: issue_number });
-            const nodes = result.repository.pullRequest.comments.nodes;
-
-            // 2. Identify comments to minimize
-            nodes.forEach(comment => {
-              const hasMarker = comment.body.includes(process.env.COMMENT_MARKER);
-              const shouldMinimize = hasMarker && !comment.isMinimized;
-              
-              const logEntry = {
-                login: comment.author?.login || 'unknown',
-                isMinimized: comment.isMinimized,
-                reason: comment.minimizedReason || '-',
-                hasMarker: hasMarker,
-                action: shouldMinimize ? 'MINIMIZE' : 'SKIP',
-                url: comment.url,
-                id: comment.id
-              };
-              auditLog.push(logEntry);
-
-              if (shouldMinimize) {
-                commentsToMinimize.push(logEntry);
-              }
-            });
-
-            // 3. Minimize comments in parallel
-            if (commentsToMinimize.length > 0) {
-              const mutation = `mutation($id:ID!){minimizeComment(input:{subjectId:$id,classifier:OUTDATED}){minimizedComment{isMinimized minimizedReason}}}`;
-              await Promise.all(
-                commentsToMinimize.map(async (logEntry) => {
-                  try {
-                    const res = await github.graphql(mutation, { id: logEntry.id });
-                    // Update log entry with new state
-                    logEntry.isMinimized = res.minimizeComment.minimizedComment.isMinimized;
-                    logEntry.reason = res.minimizeComment.minimizedComment.minimizedReason;
-                  } catch (e) {
-                    console.error(`Failed to minimize ${logEntry.id}: ${e.message}`);
-                    logEntry.action = `ERROR: ${e.message}`;
-                  }
-                })
-              );
-            }
-
-            // 4. Add final acknowledgment with audit log
-            let body = `${process.env.COMMENT_MARKER}\n### 🧹 Cleanup Audit Report\n`;
-            body += `**Target Marker:** \`${process.env.COMMENT_MARKER}\`\n\n`;
-            
-            body += `| Author | Minimized | Reason | Marker | Action | Link |\n`;
-            body += `| :--- | :---: | :--- | :---: | :--- | :--- |\n`;
-            
-            auditLog.forEach(log => {
-              body += `| ${log.login} | ${log.isMinimized ? '✅' : '❌'} | ${log.reason} | ${log.hasMarker ? '✅' : '❌'} | **${log.action}** | [view](${log.url}) |\n`;
-            });
-
-            await github.rest.issues.createComment({
-              owner,
-              repo,
-              issue_number,
-              body: body
-            });
+      - name: Acknowledge Cleanup
+        run: gh pr comment $PR_NUMBER --body "$BODY"
+        env:
+          PR_NUMBER: ${{ github.event.issue.number }}
+          BODY: |
+            ${{ env.COMMENT_MARKER }}
+            ### 🧹 Cleanup Complete
+            Previous bot comments have been marked as outdated.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
