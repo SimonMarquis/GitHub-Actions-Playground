@@ -1,12 +1,12 @@
 name: Minimize Comments
-description: Minimizes previous comments with a specific marker
+description: Minimizes previous comments on a Pull Request with a specific marker
 
 inputs:
   marker:
     description: The hidden marker used to identify previous comments
     required: true
   issue_number:
-    description: The issue or pull request number. Defaults to the current context.
+    description: The Pull Request number. Defaults to the current context.
     required: false
     default: ${{ github.event.issue.number || github.event.pull_request.number }}
   token:
@@ -27,20 +27,19 @@ runs:
           const { owner, repo } = context.repo;
           const query = `query($owner:String!,$repo:String!,$number:Int!){
             repository(owner:$owner,name:$repo){
-              issueOrPullRequest(number:$number){
-                ... on Issue { comments(last:100){ nodes{id body isMinimized} } }
-                ... on PullRequest { comments(last:100){ nodes{id body isMinimized} } }
+              pullRequest(number:$number){
+                comments(last:100){ nodes{id body isMinimized url} }
               }
             }
           }`;
           
           const mutation = `mutation($id:ID!){minimizeComment(input:{subjectId:$id,classifier:OUTDATED}){clientMutationId}}`;
           const toMinimize = ((await github.graphql(query, { owner, repo, number: Number(process.env.ISSUE_NUMBER) }))
-            .repository?.issueOrPullRequest?.comments?.nodes || [])
+            .repository?.pullRequest?.comments?.nodes || [])
             .filter(c => c.body.includes(process.env.MARKER) && !c.isMinimized)
-            .map(c => github.graphql(mutation, { id: c.id }).then(() => ({ id: c.id })).catch(e => ({ id: c.id, error: e.message })));
+            .map(c => github.graphql(mutation, { id: c.id }).then(() => ({ id: c.id, url: c.url })).catch(e => ({ id: c.id, url: c.url, error: e.message })));
 
           (await Promise.all(toMinimize)).forEach(r => {
-            if (r.error) console.error(`Failed to minimize ${r.id}: ${r.error}`);
-            else console.log(`Successfully minimized: ${r.id}`);
+            if (r.error) console.error(`Failed to minimize ${r.id} (${r.url}): ${r.error}`);
+            else console.log(`Successfully minimized: ${r.id} (${r.url})`);
           });
