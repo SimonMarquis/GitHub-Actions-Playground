@@ -1,0 +1,46 @@
+name: '📦 Kotlin scripts caching'
+
+on:
+  pull_request:
+
+jobs:
+  run:
+    name: Kotlin script
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: echo "$KOTLIN_MAIN_KTS_COMPILED_SCRIPTS_CACHE_DIR"
+      - uses: ./.github/actions/kotlin-script-cache
+      - run: echo "$KOTLIN_MAIN_KTS_COMPILED_SCRIPTS_CACHE_DIR"
+      - run: ./testing.main.kts
+
+
+# - if: env.FOO == ''
+#   run: echo "FOO is undefined"
+# - run: echo "FOO=${{ github.workspace }}/.main.kts" >> $GITHUB_ENV
+# - run: echo "$FOO"
+# - run: echo "${{ env.FOO }}"
+
+# - run: ls -alh "$KOTLIN_MAIN_KTS_COMPILED_SCRIPTS_CACHE_DIR"
+#   continue-on-error: true
+
+# - name: Cache Kotlin scripts
+#   uses: actions/cache@v3
+#   with:
+#     path: ${{ env.KOTLIN_MAIN_KTS_COMPILED_SCRIPTS_CACHE_DIR }}
+#     key: kts3-${{ runner.os }}-${{ hashFiles('**/*.main.kts') }}
+
+# - run: ls -alh "$KOTLIN_MAIN_KTS_COMPILED_SCRIPTS_CACHE_DIR"
+#   continue-on-error: true
+
+# - name:
+#   run: mkdir -p "$KOTLIN_MAIN_KTS_COMPILED_SCRIPTS_CACHE_DIR"
+
+# - run: ls -alh "$KOTLIN_MAIN_KTS_COMPILED_SCRIPTS_CACHE_DIR"
+#   continue-on-error: true
+
+# - run: ./testing.main.kts
+
+# - run: ls -alh "$KOTLIN_MAIN_KTS_COMPILED_SCRIPTS_CACHE_DIR"
+#   continue-on-error: true
+
