@@ -2,6 +2,9 @@ name: '🤖 Commit and Push'
 
 on: workflow_dispatch
 
+permissions:
+  contents: write
+
 jobs:
   commit-and-push:
     runs-on: ubuntu-latest

@@ -30,6 +30,10 @@ on:
         type: number
         required: false
 
+permissions:
+  contents: write
+  pull-requests: write
+
 env:
   INPUT_VERSION: ${{ inputs.version }}
   INPUT_DISTRIBUTION_TYPE: ${{ inputs.distribution-type }}

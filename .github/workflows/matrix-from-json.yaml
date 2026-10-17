@@ -2,8 +2,7 @@ name: 🧮 Matrix from JSON
 
 on: workflow_dispatch
 
-permissions:
-  contents: read
+permissions: {}
   
 jobs:
   setup-matrix:
