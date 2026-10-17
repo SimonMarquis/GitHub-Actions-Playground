@@ -23,8 +23,12 @@ jobs:
       COMMENT: ${{ github.event.comment.body }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: true
       - if: github.event.issue.pull_request
-        run: gh pr checkout $NUMBER
+        run: gh pr checkout "$NUMBER"
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Dump GitHub context
         if: contains(github.event.comment.body, 'dump')
