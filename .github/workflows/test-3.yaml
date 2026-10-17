@@ -2,6 +2,9 @@ name: 🧪 Test 3
 
 on: workflow_dispatch
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest

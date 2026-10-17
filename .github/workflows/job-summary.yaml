@@ -2,6 +2,8 @@ name: '📋 Job summary'
 
 on: workflow_dispatch
 
+permissions: {}
+
 jobs:
 
   summary-echo:
